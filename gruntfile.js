@@ -1,77 +1,42 @@
-module.exports = function (grunt) {
-  require('load-grunt-tasks')(grunt);
+module.exports = function(grunt) {
 
+  //Project configuration
   grunt.initConfig({
+    pkg: grunt.file.readJSON('package.json'),
     express: {
       options: {
         // Override defaults here
       },
-      web: {
-        options: {
-          script: 'backend/app.js',
-        }
-      },
-    },
-    watch: {
-      frontend: {
-        options: {
-          livereload: true
-        },
-        files: [
-          // triggering livereload when the .css file is updated
-          // (compared to triggering when sass completes)
-          // allows livereload to not do a full page refresh
-          'frontend/static/styles/*.css',
-          'frontend/templates/**/*.jade',
-          'frontend/static/scripts/**/*.js',
-          'frontend/static/img/**/*'
-        ]
-      },
-      stylesSass: {
-        files: [
-          '!frontend/styles/sass-twitter-bootstrap/',
-          'frontend/styles/**/*.scss'
-        ],
-        tasks: [
-          'compass'
-        ]
-      },
-      web: {
-        files: [
-          'backend/**/*.js',
-          'config/*',
-          'test/**/*.js',
-        ],
-        tasks: [
-          'express:web'
-        ],
-        options: {
-          nospawn: true, //Without this option specified express won't be reloaded
-          atBegin: true,
+      dev: {
+        options:{
+          script: 'server.js'
         }
       }
     },
-    parallel: {
-      web: {
-        options: {
-          stream: true
-        },
-        tasks: [{
-          grunt: true,
-          args: ['watch:frontend']
-        }, {
-          grunt: true,
-          args: ['watch:stylesSass']
-        }, {
-          grunt: true,
-          args: ['watch:web']
-        }]
+    watch: {
+      options: {
+        livereload: true
       },
+      views: {
+        files: [ 'views/**.*' ]
+      },
+      express: {
+        files:  [ 'routes/*.js' ],
+        tasks:  [ 'express:dev' ],
+        options: {
+          spawn: false
+        }
+      },
+      public: {
+        files: ["public/**/*.css", "public/**/*.js"]
+      }
     }
   });
-  grunt.registerTask('web', 'launch webserver and watch tasks', [
-    'parallel:web',
-  ]);
 
-  grunt.registerTask('default', ['web']);
+  // Load NPM tasks
+	require('load-grunt-tasks')(grunt);
+  // Default task(s).
+  grunt.registerTask('default', ['express:dev']);
+  // Server task(s)
+  grunt.registerTask('server', [ 'express:dev', 'watch' ]);
 };

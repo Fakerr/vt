@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-var app = require('../app');
+var app = require('./app');
 var debug = require('debug')('vt:server');
 var http = require('http');
 
@@ -26,7 +26,7 @@ var server = http.createServer(app);
  */
 
 server.listen(port, function() {
-  console.log("Listening on port : " +  port );
+  console.log('Express server listening on port ' +  port );
 });
 server.on('error', onError);
 server.on('listening', onListening);
