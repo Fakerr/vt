@@ -17,8 +17,10 @@
     "serve-favicon": "~2.3.0"
   },
   "devDependencies": {
-    "grunt-express-server": "^0.5.1",
+    "grunt-contrib-csslint": "^0.5.0",
+    "grunt-contrib-jshint": "^0.11.3",
     "grunt-contrib-watch": "^0.6.1",
+    "grunt-express-server": "^0.5.1",
     "grunt-parallel": "^0.4.1",
     "load-grunt-tasks": "^3.3.0"
   }
