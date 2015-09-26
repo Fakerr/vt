@@ -7,6 +7,7 @@
 var app = require('./app');
 var debug = require('debug')('vt:server');
 var http = require('http');
+var socket = require('socket.io');
 
 /**
  * Get port from environment and store in Express.
@@ -20,6 +21,19 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+
+/**
+* Create instance of socket.io by passing server.
+*/
+
+var io = socket(server);
+
+io.on('connection', function(socket){
+  console.log('a user connected');
+  socket.on('disconnect', function(){
+    console.log('user disconnected');
+  });
+});
 
 /**
  * Listen on provided port, on all network interfaces.

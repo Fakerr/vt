@@ -3,15 +3,11 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   background: #E0E0E0;
 }
-.testColor{
-  color: #000000;
-}
-
 .btn {
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   position: absolute;
-  border-radius: 0px;
+  border-radius: 0;
   font-family: Arial;
   color: #ffffff;
   font-size: 32px;
@@ -23,7 +19,7 @@ body {
   left: 0;
   right: 0;
   width: 160px;
-  height: 42px;
+  height: 40px;
   margin: auto;
 }
 
@@ -31,8 +27,8 @@ body {
   background: #3cb0fd;
   background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
   background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -webkit-gradient(top, #3cb0fd, #3498db);
   background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
   background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
-  background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
   text-decoration: none;
 }

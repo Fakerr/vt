@@ -28,13 +28,13 @@ module.exports = function(grunt) {
         }
       },
       public: {
-        files: ["public/**/*.css", "public/**/*.js"],
+        files: ["public/stylesheets/*.css", "public/javascripts/*.js"],
         tasks: ['jshint', 'csslint']
       }
     },
     jshint: {
 			all: {
-				src:['public/**/*.js'].concat(['routes/*.js',
+				src:['public/javascripts/*.js'].concat(['routes/*.js',
          'server.js', 'app.js', 'gruntfile.js']),
 				options: {
 					jshintrc: true
@@ -46,7 +46,7 @@ module.exports = function(grunt) {
 				csslintrc: '.csslintrc',
 			},
 			all: {
-				src: ["public/**/*.css"]
+				src: ["public/stylesheets/*.css"]
 			}
 		},
   });
