@@ -30,6 +30,9 @@ var io = socket(server);
 
 io.on('connection', function(socket){
   console.log('a user connected');
+  socket.on('vt', function (msg) {
+    io.emit('vt', msg);
+  });
   socket.on('disconnect', function(){
     console.log('user disconnected');
   });

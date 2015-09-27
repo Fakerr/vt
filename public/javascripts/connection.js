@@ -1,15 +1,15 @@
 /**
-* Check for waiting player.
+* init socket for client side.
 **/
+var socket = io();
 
-function checkForPlayer() {
-  var socket = io();
-  window.location.href = 'index';
-}
+$(document).ready(function (){
+  $('.btn-send').click(function () {
+    socket.emit('vt', $('.number').val());
+    $('.number').val('');
+  });
 
-
-$(document).ready(function(){
-    $("a.btn").click(function(){
-        checkForPlayer();
-    });
+  socket.on('vt', function (msg) {
+    $('.messages').append($('<li>').text(msg));
+  });
 });
