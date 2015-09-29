@@ -4,9 +4,10 @@
 var socket = io();
 
 $(document).ready(function (){
-  $('.btn-send').click(function () {
+  $('form').submit(function () {
     socket.emit('vt', $('.number').val());
     $('.number').val('');
+    return false;
   });
 
   socket.on('vt', function (msg) {
