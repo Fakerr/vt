@@ -2,7 +2,9 @@ extends layout
 
 block content
   h1= title
-  div.output
-    ul.messages   
-  input.number(autocomplete="off")
-  button.btn-send Send
+  div.wrapper
+    div.output
+      ul.messages  
+    div.input 
+      input.number(autocomplete="off")
+      button.btn-send Send
