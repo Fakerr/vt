@@ -42,22 +42,24 @@ io.on('connection', function(socket){
     room = searchForRoom();
     if(room) {
       socket.join(room.roomName);
-      socket.room = room.roomName;
+      socket.room = room;
     }else {
       socket.join(pseudo);
-      socket.room = pseudo;
       room = {
         roomName: pseudo,
         full: false
       };
+      socket.room = room;
       rooms.push(room);
     }
   });
   socket.on('vt', function(msg) {
-    socket.to(socket.room).emit('vt', msg);
+    socket.to(socket.room.roomName).emit('vt', msg);
   });
   // Logging user disconnection
   socket.on('disconnect', function(){
+    if(socket.room.full === true)
+      socket.room.full = false;
     console.log('User disconnected');
   });
 });
