@@ -29,10 +29,18 @@ var server = http.createServer(app);
 var io = socket(server);
 
 io.on('connection', function(socket){
+  // Logging user connection.
   console.log('a user connected');
+
+  socket.on('pseudo', function (pseudo) {
+    socket.pseudo = pseudo;
+    if(pseudo === 'Faker')
+      socket.join(pseudo);
+  });
   socket.on('vt', function (msg) {
     io.emit('vt', msg);
   });
+  // Logging user disconnection
   socket.on('disconnect', function(){
     console.log('user disconnected');
   });
