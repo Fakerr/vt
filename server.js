@@ -28,22 +28,37 @@ var server = http.createServer(app);
 
 var io = socket(server);
 
+// Array of rooms.
+var rooms = [];
+// Room object.
+var room = {};
+
 io.on('connection', function(socket){
   // Logging user connection.
-  console.log('a user connected');
+  console.log('User connected');
 
-  socket.on('pseudo', function (pseudo) {
+  socket.on('pseudo', function(pseudo) {
     socket.pseudo = pseudo;
-    if(pseudo === 'Faker')
+    room = searchForRoom();
+    if(room) {
+      socket.join(room.roomName);
+      socket.room = room.roomName;
+    }else {
       socket.join(pseudo);
-    socket.to(pseudo).emit('vt', 'hello');
+      socket.room = pseudo;
+      room = {
+        roomName: pseudo,
+        full: false
+      };
+      rooms.push(room);
+    }
   });
-  socket.on('vt', function (msg) {
-    socket.to(socket.pseudo).emit('vt', msg);
+  socket.on('vt', function(msg) {
+    socket.to(socket.room).emit('vt', msg);
   });
   // Logging user disconnection
   socket.on('disconnect', function(){
-    console.log('user disconnected');
+    console.log('User disconnected');
   });
 });
 
@@ -56,6 +71,18 @@ server.listen(port, function() {
 });
 server.on('error', onError);
 server.on('listening', onListening);
+
+/**
+ * Search for free room.
+ */
+ function searchForRoom() {
+   for(var i=0; i < rooms.length; i++){
+     if(rooms[i].full === false){
+       rooms[i].full = true;
+       return rooms[i];
+     }
+   }
+ }
 
 /**
  * Normalize a port into a number, string, or false.
