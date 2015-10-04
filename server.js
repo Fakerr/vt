@@ -36,9 +36,10 @@ io.on('connection', function(socket){
     socket.pseudo = pseudo;
     if(pseudo === 'Faker')
       socket.join(pseudo);
+    socket.to(pseudo).emit('vt', 'hello');
   });
   socket.on('vt', function (msg) {
-    io.emit('vt', msg);
+    socket.to(socket.pseudo).emit('vt', msg);
   });
   // Logging user disconnection
   socket.on('disconnect', function(){
