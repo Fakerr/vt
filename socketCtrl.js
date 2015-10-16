@@ -1,9 +1,9 @@
 
 //Room constructor.
-/*function Room() {
-  this.roomName: 'Default'?
-  this.full: false
-}*/
+function Room(roomName, full) {
+  this.roomName = roomName;
+  this.full = full;
+}
 
 
 /**
@@ -21,12 +21,11 @@ exports.core = function(socket, rooms){
     if(room) {
       socket.join(room.roomName);
       socket.room = room;
+      console.log(room);
     }else {
       socket.join(pseudo);
-      room = {
-        roomName: pseudo,
-        full: false
-      };
+      room = new Room(pseudo, false);
+      console.log(room);
       socket.room = room;
       rooms.push(room);
     }
