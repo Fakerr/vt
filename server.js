@@ -8,6 +8,7 @@ var app = require('./app');
 var debug = require('debug')('vt:server');
 var http = require('http');
 var socket = require('socket.io');
+var socketCtrl = require('./socketCtrl');
 
 /**
  * Get port from environment and store in Express.
@@ -28,48 +29,18 @@ var server = http.createServer(app);
 
 var io = socket(server);
 
-//Room constructor.
-function Room() {
-  this.roomName: 'Default'?
-  this.full: false
-}
-// Array of rooms.
+/**
+* Array of rooms.
+*/
 var rooms = [];
-// Room object.
-var room = {};
+
+
+/**
+* Socket.io core.
+*/
 
 io.on('connection', function(socket){
-  // Logging user connection.
-  console.log('User connected');
-  console.log(rooms);
-
-  socket.on('pseudo', function(pseudo) {
-    socket.pseudo = pseudo;
-    room = searchForRoom();
-    if(room) {
-      socket.join(room.roomName);
-      socket.room = room;
-    }else {
-      socket.join(pseudo);
-      room = {
-        roomName: pseudo,
-        full: false
-      };
-      socket.room = room;
-      rooms.push(room);
-    }
-  });
-  socket.on('vt', function(msg) {
-    socket.to(socket.room.roomName).emit('vt', msg);
-    console.log(rooms);
-  });
-  // Logging user disconnection
-  socket.on('disconnect', function(){
-    if(socket.room.full === true)
-      socket.room.full = false;
-    console.log(rooms);
-    console.log('User disconnected');
-  });
+  socketCtrl.core(socket, rooms);
 });
 
 /**
@@ -81,20 +52,6 @@ server.listen(port, function() {
 });
 server.on('error', onError);
 server.on('listening', onListening);
-
-
-/**
- * Search for free room.
- */
-
-function searchForRoom() {
-  for(var i=0; i < rooms.length; i++){
-    if(rooms[i].full === false){
-      rooms[i].full = true;
-      return rooms[i];
-     }
-   }
- }
 
 /**
  * Normalize a port into a number, string, or false.
