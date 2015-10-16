@@ -28,6 +28,11 @@ var server = http.createServer(app);
 
 var io = socket(server);
 
+//Room constructor.
+function Room() {
+  this.roomName: 'Default'?
+  this.full: false
+}
 // Array of rooms.
 var rooms = [];
 // Room object.
