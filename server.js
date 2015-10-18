@@ -40,7 +40,7 @@ var rooms = [];
 */
 
 io.on('connection', function(socket){
-  socketCtrl.core(socket, rooms);
+  socketCtrl.core(io, socket, rooms);
 });
 
 /**

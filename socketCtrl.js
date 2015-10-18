@@ -6,12 +6,11 @@ function Room(roomName, full, opponent) {
   this.opponent = opponent;
 }
 
-
 /**
 * Socket base core.
 **/
 
-exports.core = function(socket, rooms){
+exports.core = function(io, socket, rooms){
   var room = {};
   // Logging user connection.
   console.log('User connected');
@@ -31,12 +30,13 @@ exports.core = function(socket, rooms){
   });
   socket.on('vt', function(msg) {
     socket.to(socket.room.roomName).emit('vt', msg);
-    console.log(socket.room);
   });
-  // Logging user disconnection
+  // User disconnection
   socket.on('disconnect', function(){
-    if(socket.room.full === true)
+    if(socket.room.full === true) {
       socket.room.full = false;
+      //updateRoomMembers(socket, socket.room, io);
+    }
     console.log('User disconnected');
   });
 }
@@ -53,4 +53,12 @@ function searchForRoom(rooms, pseudo) {
       return rooms[i];
      }
    }
+ }
+
+ /**
+ * Update room members after someone leaving.
+ **/
+
+ function updateRoomMembers(socket, room, io) {
+   console.log(Object.keys(io.nsps['/'].adapter.rooms[room.roomName]).length);
  }
