@@ -21,7 +21,8 @@ module.exports = function(grunt) {
         files: [ 'views/**.*' ]
       },
       express: {
-        files:  [ 'routes/*.js', 'app.js', 'server.js' ],
+        files:  [ 'routes/*.js', 'app.js', 'server.js',
+        'socketCtrl.js' ],
         tasks:  [ 'jshint', 'express:dev' ],
         options: {
           spawn: false
@@ -35,7 +36,7 @@ module.exports = function(grunt) {
     jshint: {
 			all: {
 				src:['public/javascripts/*.js'].concat(['routes/*.js',
-         'server.js', 'app.js', 'gruntfile.js']),
+         'server.js', 'app.js', 'socketCtrl.js', 'gruntfile.js']),
 				options: {
 					jshintrc: true
 				}
