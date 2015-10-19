@@ -41,9 +41,6 @@ exports.core = function(io, socket, dualRooms){
       // we try to found another waiting player in different room.
       //If not we stay in the same room.
       updateRoomMembers(socket, dualRooms, io);
-      //Update room status.
-      socket.room.full = false;
-      socket.room.opponent = 'none';
     }
     console.log('User disconnected');
   });
@@ -83,5 +80,9 @@ function searchForRoom(rooms, pseudo) {
      });
      oppSocket.join(newRoom.roomName);
      oppSocket.room = newRoom;
+   }else {
+     //Update room status.
+     socket.room.full = false;
+     socket.room.opponent = 'none';
    }
  }
