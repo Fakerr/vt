@@ -2,8 +2,10 @@
 * init socket for client side.
 **/
 var socket = io();
-// Nickname of user to send to the server.
-var pseudo = prompt('Enter your nickname.');
+// User's name to send to the server.
+var pseudo;
+// User must enter a name.
+while(!(pseudo = prompt('Enter your name.')));
 
 $(document).ready(function (){
   $('form').submit(function () {
