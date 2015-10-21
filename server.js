@@ -43,7 +43,6 @@ io.on('connection', function(socket){
   socketCtrl.core(io, socket, rooms);
 });
 
-
 /**
  * Listen on provided port, on all network interfaces.
  */
