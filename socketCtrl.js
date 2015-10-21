@@ -38,7 +38,6 @@ exports.core = function(io, socket, dualRooms){
   socket.on('disconnect', function(){
     if(socket.room.full === true) {
       updateRoomMembers(socket, dualRooms, io);
-      console.log(dualRooms);
     }else {
       deleteRoom(dualRooms, socket.room);
     }
@@ -73,18 +72,16 @@ function createRoom(socket, dualRooms, room) {
 */
 
 function deleteRoom(dualRooms, room) {
-  console.log('predelete ' + dualRooms );
   dualRooms = _.reject(dualRooms, function(el) {
     return el.roomName === room.roomName;
   });
-  console.log('delete ' + dualRooms);
 }
 
 /**
  * Search for free room.
  */
 
-function searchForRoom(rooms, pseudo) {
+function searchForRoom(rooms) {
   for(var i=0; i < rooms.length; i++){
     if(rooms[i].full === false)
       return rooms[i];
@@ -105,14 +102,13 @@ function searchForRoom(rooms, pseudo) {
    // Get socket from id.
    var oppSocket = io.sockets.connected[socketId];
    //Searching for available room.
-   newRoom = searchForRoom(dualRooms, oppSocket.pseudo);
+   newRoom = searchForRoom(dualRooms);
    if(newRoom) {
      oppSocket.leave(oppSocket.room.roomName);
      //Update dualRooms (deleting current one).
      deleteRoom(dualRooms, oppSocket.room);
      // Join the new room.
-     oppSocket.join(newRoom.roomName);
-     oppSocket.room = newRoom;
+     joinRoom(oppSocket, newRoom);
    }else {
      //Update room status.
      oppSocket.room.full = false;
