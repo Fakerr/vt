@@ -2,7 +2,10 @@
 var _ = require('underscore');
 
 
-//Room constructor.
+/**
+* Room constructor.
+*/
+
 function Room(roomName, full, opponent) {
   this.roomName = roomName;
   this.full = full;
@@ -17,35 +20,65 @@ exports.core = function(io, socket, dualRooms){
   var room = {};
   // Logging user connection.
   console.log('User connected');
-
   socket.on('pseudo', function(pseudo) {
     socket.pseudo = pseudo;
     //Searching available room or creating one if it doesn't exist.
-    room = searchForRoom(dualRooms, pseudo);
+    room = searchForRoom(dualRooms);
     if(room) {
-      socket.join(room.roomName);
-      socket.room = room;
+      joinRoom(socket, room);
     }else {
-      socket.join(pseudo);
-      room = new Room(pseudo, false, 'none');
-      socket.room = room;
-      dualRooms.push(room);
+      createRoom(socket, dualRooms, room);
     }
   });
+  // Send messages to all room members.
   socket.on('vt', function(msg) {
     socket.to(socket.room.roomName).emit('vt', msg);
   });
   // User disconnection
   socket.on('disconnect', function(){
     if(socket.room.full === true) {
-      //Here, we try to update other opponent status.In this case,
-      // we try to found another waiting player in different room.
-      //If not we stay in the same room.
       updateRoomMembers(socket, dualRooms, io);
+      console.log(dualRooms);
+    }else {
+      deleteRoom(dualRooms, socket.room);
     }
     console.log('User disconnected');
   });
 };
+
+/**
+* Join room.
+*/
+
+function joinRoom(socket, room) {
+  room.full = true;
+  room.opponent = socket.pseudo;
+  socket.join(room.roomName);
+  socket.room = room;
+}
+
+/**
+* Create new room.
+*/
+
+function createRoom(socket, dualRooms, room) {
+  socket.join(socket.pseudo);
+  room = new Room(socket.pseudo, false, 'none');
+  socket.room = room;
+  dualRooms.push(room);
+}
+
+/**
+* Delete room.
+*/
+
+function deleteRoom(dualRooms, room) {
+  console.log('predelete ' + dualRooms );
+  dualRooms = _.reject(dualRooms, function(el) {
+    return el.roomName === room.roomName;
+  });
+  console.log('delete ' + dualRooms);
+}
 
 /**
  * Search for free room.
@@ -53,17 +86,17 @@ exports.core = function(io, socket, dualRooms){
 
 function searchForRoom(rooms, pseudo) {
   for(var i=0; i < rooms.length; i++){
-    if(rooms[i].full === false){
-      rooms[i].full = true;
-      rooms[i].opponent = pseudo;
+    if(rooms[i].full === false)
       return rooms[i];
-     }
    }
  }
 
  /**
  * Update room members after someone leaving.
- **/
+ * Here, we try to update other opponent status.In this case,
+ * we try to found another waiting player in different room.
+ * If not, we stay in the same room.
+ */
 
  function updateRoomMembers(socket, dualRooms, io) {
    var newRoom = {};
@@ -75,15 +108,14 @@ function searchForRoom(rooms, pseudo) {
    newRoom = searchForRoom(dualRooms, oppSocket.pseudo);
    if(newRoom) {
      oppSocket.leave(oppSocket.room.roomName);
-     //Update Rooms.
-     dualRooms = _.reject(dualRooms, function(el) {
-       return el.roomName === oppSocket.room.roomName;
-     });
+     //Update dualRooms (deleting current one).
+     deleteRoom(dualRooms, oppSocket.room);
+     // Join the new room.
      oppSocket.join(newRoom.roomName);
      oppSocket.room = newRoom;
    }else {
      //Update room status.
-     socket.room.full = false;
-     socket.room.opponent = 'none';
+     oppSocket.room.full = false;
+     oppSocket.room.opponent = 'none';
    }
  }
