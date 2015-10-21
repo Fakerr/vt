@@ -71,10 +71,10 @@ function createRoom(socket, dualRooms, room) {
 * Delete room.
 */
 
-function deleteRoom(dualRooms, room) {
-  dualRooms = _.reject(dualRooms, function(el) {
-    return el.roomName === room.roomName;
-  });
+function deleteRoom(rooms, room) {
+    var index = rooms.indexOf(room);
+    if(index > -1)
+      rooms.splice(index,1);
 }
 
 /**
