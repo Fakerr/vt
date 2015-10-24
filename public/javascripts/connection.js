@@ -5,7 +5,7 @@ var socket = io();
 // User's name to send to the server.
 var pseudo;
 // User must enter a name.
-while(!(pseudo = prompt('Enter your name.')));
+//while(!(pseudo = prompt('Enter your name.')));
 
 $(document).ready(function (){
   $('form').submit(function () {

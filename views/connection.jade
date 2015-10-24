@@ -1,4 +1,10 @@
 extends layout
 
 block content
-  a.btn Start game
+  form.form-horizontal
+    div.row
+      div.col-xs-2
+        label(for='playerName') Player name     
+        input#playerName.form-control(type='text', placeholder='Enter your name', required='') 
+    br
+    button.btn.btn-primary(type='submit') Start Game
