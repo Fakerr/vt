@@ -32,6 +32,8 @@ exports.core = function(io, socket, dualRooms){
   });
   // Send messages to all room members.
   socket.on('vt', function(msg) {
+    //Check for msg(number) validity.
+    var val = numberValidity(msg);
     socket.to(socket.room.roomName).emit('vt', msg);
   });
   // User disconnection
@@ -95,7 +97,7 @@ function searchForRoom(rooms) {
  * If not, we stay in the same room.
  */
 
- function updateRoomMembers(socket, dualRooms, io) {
+function updateRoomMembers(socket, dualRooms, io) {
    var newRoom = {};
    // Getting id of room player.
    var socketId = Object.keys(io.nsps['/'].adapter.rooms[socket.room.roomName])[0];
@@ -115,3 +117,29 @@ function searchForRoom(rooms) {
      oppSocket.room.opponent = 'none';
    }
  }
+
+/**
+ * Return false if number is not valid.
+ */
+
+function numberValidity(number) {
+  if (typeof number !== "string") {
+    return false;
+  }
+  if (number.length != 4) {
+    return false;
+  }
+  for(var i=0; i<4; i++) {
+    var j = 0;
+    while(j < 4) {
+      if (i != j && number[i] != number[j]){
+        j++;
+      }else if (i != j) {
+        return false;
+      }else {
+        j++;
+      }
+    }
+  }
+  return true;
+}
