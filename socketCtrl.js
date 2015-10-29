@@ -3,8 +3,8 @@ var _ = require('underscore');
 
 
 /**
-* Room constructor.
-*/
+ * Room constructor.
+ */
 
 function Room(roomName, full, opponent) {
   this.roomName = roomName;
@@ -13,23 +13,23 @@ function Room(roomName, full, opponent) {
 }
 
 /**
-* Player constructor.
-*/
+ * Player constructor.
+ */
 
-function Player(name, number, isValid) {
-  this.name = name;
+function Player(name, number, nbRegister) {
+  this.name = name || '';
   this.number = number || null;
-  this.isValid = isValid || false;
 }
 
 /**
-* Socket base core.
-**/
+ * Socket base core.
+ */
 
 exports.core = function(io, socket, dualRooms){
   var room = {};
   // Logging user connection.
   console.log('User connected');
+  // Handling user name.
   socket.on('pseudo', function(pseudo) {
     //Instanciate new player and add it to socket object.
     socket.player = new Player(pseudo);
@@ -41,7 +41,12 @@ exports.core = function(io, socket, dualRooms){
       createRoom(socket, dualRooms, room);
     }
   });
-  // Send messages to all room members.
+  //Handling user number.*
+  socket.on('number', function(number) {
+    socket.player.number = number;
+    console.log(socket.player.number);
+  });
+  // Handle number message.
   socket.on('vt', function(msg) {
     //Check for msg(number) validity.
     var val = numberValidity(msg);
@@ -59,8 +64,8 @@ exports.core = function(io, socket, dualRooms){
 };
 
 /**
-* Join room.
-*/
+ * Join room.
+ */
 
 function joinRoom(socket, room) {
   room.full = true;
@@ -70,8 +75,8 @@ function joinRoom(socket, room) {
 }
 
 /**
-* Create new room.
-*/
+ * Create new room.
+ */
 
 function createRoom(socket, dualRooms, room) {
   socket.join(socket.player.name);
@@ -81,8 +86,8 @@ function createRoom(socket, dualRooms, room) {
 }
 
 /**
-* Delete room.
-*/
+ * Delete room.
+ */
 
 function deleteRoom(rooms, room) {
     var index = rooms.indexOf(room);
