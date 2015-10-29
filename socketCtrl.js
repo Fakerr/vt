@@ -13,6 +13,16 @@ function Room(roomName, full, opponent) {
 }
 
 /**
+* Player constructor.
+*/
+
+function Player(name, number, isValid) {
+  this.name = name;
+  this.number = number || null;
+  this.isValid = isValid || false;
+}
+
+/**
 * Socket base core.
 **/
 
@@ -21,7 +31,8 @@ exports.core = function(io, socket, dualRooms){
   // Logging user connection.
   console.log('User connected');
   socket.on('pseudo', function(pseudo) {
-    socket.pseudo = pseudo;
+    //Instanciate new player and add it to socket object.
+    socket.player = new Player(pseudo);
     //Searching available room or creating one if it doesn't exist.
     room = searchForRoom(dualRooms);
     if(room) {
@@ -53,7 +64,7 @@ exports.core = function(io, socket, dualRooms){
 
 function joinRoom(socket, room) {
   room.full = true;
-  room.opponent = socket.pseudo;
+  room.opponent = socket.player.name;
   socket.join(room.roomName);
   socket.room = room;
 }
@@ -63,8 +74,8 @@ function joinRoom(socket, room) {
 */
 
 function createRoom(socket, dualRooms, room) {
-  socket.join(socket.pseudo);
-  room = new Room(socket.pseudo, false, 'none');
+  socket.join(socket.player.name);
+  room = new Room(socket.player.name, false, 'none');
   socket.room = room;
   dualRooms.push(room);
 }
