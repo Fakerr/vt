@@ -17,7 +17,6 @@ while(!val){
 
 $(document).ready(function (){
   $('form').submit(function () {
-    $('.output ul').append('<li>' + $('.number').val() + '</li>');
     socket.emit('vt', $('.number').val());
     $('.number').val('');
     return false;

@@ -44,13 +44,16 @@ exports.core = function(io, socket, dualRooms){
   //Handling user number.*
   socket.on('number', function(number) {
     socket.player.number = number;
-    console.log(socket.player.number);
   });
   // Handle number message.
   socket.on('vt', function(msg) {
     //Check for msg(number) validity.
     var val = numberValidity(msg);
-    socket.to(socket.room.roomName).emit('vt', msg);
+    if(val)
+      io.to(socket.room.roomName).emit('vt', msg);
+    else {
+      console.log(msg);
+    }
   });
   // User disconnection
   socket.on('disconnect', function(){
