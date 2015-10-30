@@ -51,15 +51,16 @@ exports.core = function(io, socket, dualRooms){
     var val = numberValidity(msg);
     if(val){
       // Treat number.
-      treatNumber(msg, io, socket);
-      io.to(socket.room.roomName).emit('vt', msg);
+      var pos = treatNumber(msg, io, socket, function(data){
+        io.to(socket.room.roomName).emit('vt',[msg, data]);
+      });
     }
     else {
       io.sockets.connected[socket.id]
       .emit('wn', 'Please enter a valid number.');
     }
   });
-  // User disconnection
+  // User disconnection.
   socket.on('disconnect', function(){
     if(socket.room.full === true) {
       updateRoomMembers(socket, dualRooms, io);
@@ -171,6 +172,38 @@ function numberValidity(number) {
  * Treat number correspondance.
  */
 
-function  treatNumber(number, io, socket) {
-  
+function  treatNumber(number, io, socket, callback) {
+  var socketIds = Object.keys(io.nsps['/'].adapter.rooms[socket.room.roomName]);
+  var socketId = _.find(socketIds, function(val){
+    return val !== socket.id;
+  });
+  var oppSocket = io.sockets.connected[socketId];
+  var result = vt(number, oppSocket.player.number);
+  callback(result);
 }
+
+/**
+ * Render vt.
+ */
+
+ function vt(number, numberToFound) {
+   var result = {
+     T: 0,
+     V: 0
+   };
+   for(var i=0; i < number.length; i++) {
+     var j = 0;
+     while(j < numberToFound.length) {
+       if(number[i] === numberToFound[j] && i == j){
+         result.T += 1;
+         break;
+       }else if(number[i] === numberToFound[j]){
+         result.V += 1;
+         break;
+       }else{
+         j++;
+       }
+     }
+   }
+   return result;
+ }

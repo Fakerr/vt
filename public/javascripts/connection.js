@@ -34,8 +34,8 @@ $(document).ready(function (){
   // Sending number.
   socket.emit('number', number);
   // Handle message.
-  socket.on('vt', function (msg) {
-    $('.messages').append($('<li>').text(msg)
+  socket.on('vt', function (data) {
+    $('.messages').append($('<li>').text(data[0] + '  ' + data[1].V +  'V' + data[1].T + 'T')
     .css('font-weight', 'bold'));
   });
   // Handle error.
