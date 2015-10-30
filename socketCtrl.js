@@ -52,7 +52,8 @@ exports.core = function(io, socket, dualRooms){
     if(val)
       io.to(socket.room.roomName).emit('vt', msg);
     else {
-      io.sockets.connected[socket.id].emit('vt', 'Wrong number');
+      io.sockets.connected[socket.id]
+      .emit('wn', 'Please enter a valid number.');
     }
   });
   // User disconnection

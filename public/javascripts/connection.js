@@ -29,11 +29,13 @@ $(document).ready(function (){
   socket.emit('number', number);
   // Handle message.
   socket.on('vt', function (msg) {
-    $('.messages').append($('<li>').text(msg));
+    $('.messages').append($('<li>').text(msg)
+    .css('font-weight', 'bold'));
   });
   // Handle error.
   socket.on('wn', function (msg) {
-    $('.messages').append($('<li>').text(msg));
+    $('.messages').append($('<li>').text(msg)
+    .css({'color': 'red', 'font-weight': 'bold'}));
   });
 });
 
