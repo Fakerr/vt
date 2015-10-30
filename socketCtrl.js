@@ -49,8 +49,11 @@ exports.core = function(io, socket, dualRooms){
   socket.on('vt', function(msg) {
     //Check for msg(number) validity.
     var val = numberValidity(msg);
-    if(val)
+    if(val){
+      // Treat number.
+      treatNumber(msg, io, socket);
       io.to(socket.room.roomName).emit('vt', msg);
+    }
     else {
       io.sockets.connected[socket.id]
       .emit('wn', 'Please enter a valid number.');
@@ -162,4 +165,12 @@ function numberValidity(number) {
     }
   }
   return true;
+}
+
+/**
+ * Treat number correspondance.
+ */
+
+function  treatNumber(number, io, socket) {
+  
 }

@@ -15,6 +15,12 @@ while(!val){
     val = true;
 }
 
+var title = document.createElement('H2');
+    title.setAttribute("style", "font-weight: bold");
+var t = document.createTextNode('Your number is : ' + number);
+title.appendChild(t);
+document.body.appendChild(title);
+
 $(document).ready(function (){
   $('form').submit(function () {
     socket.emit('vt', $('.number').val());
