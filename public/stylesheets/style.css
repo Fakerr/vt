@@ -50,9 +50,6 @@ body {
 .messages li {
   padding: 5px 10px;
 }
-.messages li:nth-child(odd) {
-  background: #eee;
-}
 .output {
   position: relative;
   background-color: #C8C8C8;

@@ -52,7 +52,7 @@ exports.core = function(io, socket, dualRooms){
     if(val)
       io.to(socket.room.roomName).emit('vt', msg);
     else {
-      console.log(msg);
+      io.sockets.connected[socket.id].emit('vt', 'Wrong number');
     }
   });
   // User disconnection

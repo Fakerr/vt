@@ -27,8 +27,12 @@ $(document).ready(function (){
 
   // Sending number.
   socket.emit('number', number);
-
+  // Handle message.
   socket.on('vt', function (msg) {
+    $('.messages').append($('<li>').text(msg));
+  });
+  // Handle error.
+  socket.on('wn', function (msg) {
     $('.messages').append($('<li>').text(msg));
   });
 });
