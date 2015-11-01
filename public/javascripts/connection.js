@@ -15,6 +15,13 @@ while(!val){
     val = true;
 }
 
+// Show player name.
+var player = document.createElement('H2');
+    player.setAttribute("style", "font-weight: bold");
+var t = document.createTextNode(pseudo + ' : ');
+player.appendChild(t);
+document.body.appendChild(player);
+// Show player number.
 var title = document.createElement('H2');
     title.setAttribute("style", "font-weight: bold");
 var t = document.createTextNode('Your number is : ' + number);
