@@ -33,6 +33,7 @@ exports.core = function(io, socket, dualRooms){
   socket.on('pseudo', function(pseudo) {
     //Instanciate new player and add it to socket object.
     socket.player = new Player(pseudo);
+    console.log(socket.player.name);
     //Searching available room or creating one if it doesn't exist.
     room = searchForRoom(dualRooms);
     if(room) {
@@ -51,8 +52,8 @@ exports.core = function(io, socket, dualRooms){
     var val = numberValidity(msg);
     if(val){
       // Treat number.
-      var pos = treatNumber(msg, io, socket, function(data){
-        io.to(socket.room.roomName).emit('vt',[msg, data]);
+      treatNumber(msg, io, socket, function(data){
+        io.to(socket.room.roomName).emit('vt',[msg, data, socket.player.name]);
       });
     }
     else {
