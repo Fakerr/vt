@@ -18,7 +18,7 @@ while(!val){
 // Show player name.
 var player = document.createElement('H2');
     player.setAttribute("style", "font-weight: bold");
-var t = document.createTextNode(pseudo + ' : ');
+var t = document.createTextNode(pseudo);
 player.appendChild(t);
 document.body.appendChild(player);
 // Show player number.

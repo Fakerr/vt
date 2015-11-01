@@ -56,7 +56,7 @@ exports.core = function(io, socket, dualRooms){
         // Treat number.
         treatNumber(msg, io, socket, function(data){
           // Pass turn to opponent.
-          passTurn(io, socket); // Opponent must exist.
+          passTurn(io, socket); // Opponent must exist!!
           io.to(socket.room.roomName).emit('vt',[msg, data, socket.player.name]);
         });
       }
@@ -85,6 +85,8 @@ exports.core = function(io, socket, dualRooms){
  */
 
 function joinRoom(socket, room) {
+  // Player who join the room is first player to play.
+  socket.player.turn = true;
   room.full = true;
   room.opponent = socket.player.name;
   socket.join(room.roomName);
@@ -96,8 +98,6 @@ function joinRoom(socket, room) {
  */
 
 function createRoom(socket, dualRooms, room) {
-  // Creator of the room is first player to play.
-  socket.player.turn = true;
   // join/create a room with the same name as the player.
   socket.join(socket.player.name);
   room = new Room(socket.player.name, false, 'none');
@@ -149,6 +149,7 @@ function updateRoomMembers(socket, dualRooms, io) {
      joinRoom(oppSocket, newRoom);
    }else {
      //Update room status.
+     oppSocket.player.turn = false;
      oppSocket.room.full = false;
      oppSocket.room.opponent = 'none';
    }
