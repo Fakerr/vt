@@ -16,9 +16,10 @@ function Room(roomName, full, opponent) {
  * Player constructor.
  */
 
-function Player(name, number, nbRegister) {
-  this.name = name || '';
+function Player(name, number, turn) {
+  this.name = name || 'Default';
   this.number = number || null;
+  this.turn = turn || false;
 }
 
 /**
@@ -26,16 +27,15 @@ function Player(name, number, nbRegister) {
  */
 
 exports.core = function(io, socket, dualRooms){
-  var room = {};
+
   // Logging user connection.
   console.log('User connected');
   // Handling user name.
   socket.on('pseudo', function(pseudo) {
     //Instanciate new player and add it to socket object.
     socket.player = new Player(pseudo);
-    console.log(socket.player.name);
     //Searching available room or creating one if it doesn't exist.
-    room = searchForRoom(dualRooms);
+    var room = searchForRoom(dualRooms);
     if(room) {
       joinRoom(socket, room);
     }else {
@@ -48,17 +48,25 @@ exports.core = function(io, socket, dualRooms){
   });
   // Handle number message.
   socket.on('vt', function(msg) {
-    //Check for msg(number) validity.
-    var val = numberValidity(msg);
-    if(val){
-      // Treat number.
-      treatNumber(msg, io, socket, function(data){
-        io.to(socket.room.roomName).emit('vt',[msg, data, socket.player.name]);
-      });
-    }
-    else {
+    // Check for turn.
+    if(socket.player.turn){
+      //Check for msg(number) validity.
+      var val = numberValidity(msg);
+      if(val){
+        // Treat number.
+        treatNumber(msg, io, socket, function(data){
+          // Pass turn to opponent.
+          passTurn(io, socket); // Opponent must exist.
+          io.to(socket.room.roomName).emit('vt',[msg, data, socket.player.name]);
+        });
+      }
+      else {
+        io.sockets.connected[socket.id]
+        .emit('wn', 'Please enter a valid number.');
+      }
+    }else{
       io.sockets.connected[socket.id]
-      .emit('wn', 'Please enter a valid number.');
+      .emit('wn', 'Please, wait your turn.');
     }
   });
   // User disconnection.
@@ -88,6 +96,9 @@ function joinRoom(socket, room) {
  */
 
 function createRoom(socket, dualRooms, room) {
+  // Creator of the room is first player to play.
+  socket.player.turn = true;
+  // join/create a room with the same name as the player.
   socket.join(socket.player.name);
   room = new Room(socket.player.name, false, 'none');
   socket.room = room;
@@ -208,3 +219,16 @@ function  treatNumber(number, io, socket, callback) {
    }
    return result;
  }
+
+ /**
+  * Pass turn to opponent.
+  */
+
+function passTurn(io, socket){
+  socket.player.turn = false;
+  var socketIds = Object.keys(io.nsps['/'].adapter.rooms[socket.room.roomName]);
+  var socketId = _.find(socketIds, function(val){
+    return val !== socket.id;
+  });
+  io.sockets.connected[socketId].player.turn = true;
+}
