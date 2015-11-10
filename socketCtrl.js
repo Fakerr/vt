@@ -52,7 +52,7 @@ function Player(name, number, turn) {
  * Disconnect.
  */
 
-function disconnection(socket, room) {
+function disconnection(socket, room, dualRooms) {
   if(socket.room.full === true) {
     updateRoomMembers(socket, dualRooms, io);
   }else {
