@@ -3,6 +3,32 @@ var _ = require('underscore');
 
 
 /**
+ * Socket base core.
+ */
+
+exports.core = function(io, socket, dualRooms){
+
+  // Logging user connection.
+  console.log('User connected');
+  // Handling user name.
+  socket.on('pseudo', function(pseudo) {
+    initPlayer(pseudo, socket, dualRooms);
+  });
+  //Handling user number.*
+  socket.on('number', function(number) {
+    socket.player.number = number;
+  });
+  // Handle message.
+  socket.on('vt', function(msg) {
+    vtCore(socket, msg, io);
+  });
+  // User disconnection.
+  socket.on('disconnect', function(){
+    disconnection(socket, io, dualRooms);
+  });
+};
+
+/**
  * Room constructor.
  */
 
@@ -23,62 +49,60 @@ function Player(name, number, turn) {
 }
 
 /**
- * Socket base core.
+ * Disconnect.
  */
 
-exports.core = function(io, socket, dualRooms){
+function disconnection(socket, room) {
+  if(socket.room.full === true) {
+    updateRoomMembers(socket, dualRooms, io);
+  }else {
+    deleteRoom(dualRooms, socket.room);
+  }
+  console.log('User disconnected');
+}
 
-  // Logging user connection.
-  console.log('User connected');
-  // Handling user name.
-  socket.on('pseudo', function(pseudo) {
-    //Instanciate new player and add it to socket object.
-    socket.player = new Player(pseudo);
-    //Searching available room or creating one if it doesn't exist.
-    var room = searchForRoom(dualRooms);
-    if(room) {
-      joinRoom(socket, room);
-    }else {
-      createRoom(socket, dualRooms, room);
-    }
-  });
-  //Handling user number.*
-  socket.on('number', function(number) {
-    socket.player.number = number;
-  });
-  // Handle number message.
-  socket.on('vt', function(msg) {
-    // Check for turn.
-    if(socket.player.turn){
-      //Check for msg(number) validity.
-      var val = numberValidity(msg);
-      if(val){
-        // Treat number.
-        treatNumber(msg, io, socket, function(data){
-          // Pass turn to opponent.
-          passTurn(io, socket); // Opponent must exist!!
-          io.to(socket.room.roomName).emit('vt',[msg, data, socket.player.name]);
-        });
-      }
-      else {
-        io.sockets.connected[socket.id]
-        .emit('wn', 'Please enter a valid number.');
-      }
-    }else{
-      io.sockets.connected[socket.id]
-      .emit('wn', 'Please, wait your turn.');
-    }
-  });
-  // User disconnection.
-  socket.on('disconnect', function(){
-    if(socket.room.full === true) {
-      updateRoomMembers(socket, dualRooms, io);
-    }else {
-      deleteRoom(dualRooms, socket.room);
-    }
-    console.log('User disconnected');
-  });
-};
+/**
+ * Vt core.
+ */
+
+function vtCore(socket, msg, io){
+   // Check for turn.
+   if(socket.player.turn){
+     //Check for msg(number) validity.
+     var val = numberValidity(msg);
+     if(val){
+       // Treat number.
+       treatNumber(msg, io, socket, function(data){
+         // Pass turn to opponent.
+         passTurn(io, socket); // Opponent must exist!!
+         io.to(socket.room.roomName).emit('vt',[msg, data, socket.player.name]);
+       });
+     }
+     else {
+       io.sockets.connected[socket.id]
+       .emit('wn', 'Please enter a valid number.');
+     }
+   }else{
+     io.sockets.connected[socket.id]
+     .emit('wn', 'Please, wait your turn.');
+   }
+ }
+
+/**
+ * Init player.
+ */
+
+ function initPlayer(pseudo, socket, dualRooms){
+   //Instanciate new player and add it to socket object.
+   socket.player = new Player(pseudo);
+   //Searching available room or creating one if it doesn't exist.
+   var room = searchForRoom(dualRooms);
+   if(room) {
+     joinRoom(socket, room);
+   }else {
+     createRoom(socket, dualRooms, room);
+   }
+ }
 
 /**
  * Join room.
