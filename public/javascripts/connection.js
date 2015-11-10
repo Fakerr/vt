@@ -42,9 +42,15 @@ $(document).ready(function (){
   socket.emit('number', number);
   // Handle message.
   socket.on('vt', function (data) {
-    $('.messages').append($('<li>')
-    .text(data[2] + ' : '  + data[0] + '\t' + data[1].V + 'V' + data[1].T + 'T')
-    .css('font-weight', 'bold'));
+    if(data[1].T === 4){
+      $('.messages').append($('<li>')
+      .text('GG, You won !')
+      .css({'font-weight':'bold', 'color': 'green'}));
+    }else{
+      $('.messages').append($('<li>')
+      .text(data[2] + ' : '  + data[0] + '\t' + data[1].V + 'V' + data[1].T + 'T')
+      .css('font-weight', 'bold'));
+    }
   });
   // Handle error.
   socket.on('wn', function (msg) {
