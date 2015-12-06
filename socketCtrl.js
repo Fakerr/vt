@@ -183,7 +183,7 @@ function updateRoomMembers(socket, dualRooms, io) {
  * Return false if number is not valid.
  */
 
-exports.numberValidity = function(number) {
+function numberValidity(number) {
   if (typeof number !== "string") {
     return false;
   }
@@ -203,7 +203,7 @@ exports.numberValidity = function(number) {
     }
   }
   return true;
-};
+}
 
 /**
  * Treat number correspondance.
