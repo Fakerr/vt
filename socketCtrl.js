@@ -14,7 +14,7 @@ exports.core = function(io, socket, dualRooms){
   socket.on('pseudo', function(pseudo) {
     initPlayer(pseudo, socket, dualRooms);
   });
-  //Handling user number.*
+  //Handling user number.
   socket.on('number', function(number) {
     socket.player.number = number;
   });
@@ -183,7 +183,7 @@ function updateRoomMembers(socket, dualRooms, io) {
  * Return false if number is not valid.
  */
 
-function numberValidity(number) {
+exports.numberValidity = function(number) {
   if (typeof number !== "string") {
     return false;
   }
@@ -203,7 +203,7 @@ function numberValidity(number) {
     }
   }
   return true;
-}
+};
 
 /**
  * Treat number correspondance.

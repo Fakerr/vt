@@ -36,7 +36,8 @@ module.exports = function(grunt) {
     jshint: {
 			all: {
 				src:['public/javascripts/*.js'].concat(['routes/*.js',
-         'server.js', 'app.js', 'socketCtrl.js', 'gruntfile.js']),
+         'server.js', 'app.js', 'socketCtrl.js', 'gruntfile.js'])
+         .concat(['test/*.js']),
 				options: {
 					jshintrc: true
 				}
