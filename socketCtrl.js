@@ -1,17 +1,37 @@
 var _ = require('underscore');
 
+
+  /**
+   * Room constructor.
+   */
+  function Room(roomName, full, opponent) {
+    this.roomName = roomName;
+    this.full = full;
+    this.opponent = opponent;
+  }
+
+  /**
+   * Player constructor.
+   */
+  function Player(name, number, turn) {
+    this.name = name || 'Default';
+    this.number = number || null;
+    this.turn = turn || false;
+  }
+
+
 module.exports = {
 
   /**
    * Socket base core.
    */
   core : function(io, socket, dualRooms){
-
+    var self = this;
     // Logging user connection.
     console.log('User connected');
     // Handling user name.
     socket.on('pseudo', function(pseudo) {
-      this.initPlayer(pseudo, socket, dualRooms);
+      self.initPlayer(pseudo, socket, dualRooms);
     });
     //Handling user number.
     socket.on('number', function(number) {
@@ -19,30 +39,12 @@ module.exports = {
     });
     // Handle message.
     socket.on('vt', function(msg) {
-      this.vtCore(socket, msg, io);
+      self.vtCore(socket, msg, io);
     });
     // User disconnection.
     socket.on('disconnect', function(){
-      this.disconnection(socket, io, dualRooms);
+      self.disconnection(socket, io, dualRooms);
     });
-  },
-
-  /**
-   * Room constructor.
-   */
-  Room :  function(roomName, full, opponent) {
-    this.roomName = roomName;
-    this.full = full;
-    this.opponent = opponent;
-  },
-
-  /**
-   * Player constructor.
-   */
-  Player : function(name, number, turn) {
-    this.name = name || 'Default';
-    this.number = number || null;
-    this.turn = turn || false;
   },
 
   /**
@@ -50,9 +52,9 @@ module.exports = {
    */
    disconnection : function(socket, io, dualRooms) {
      if(socket.room.full === true) {
-       updateRoomMembers(socket, dualRooms, io);
+       this.updateRoomMembers(socket, dualRooms, io);
      }else {
-       deleteRoom(dualRooms, socket.room);
+       this.deleteRoom(dualRooms, socket.room);
      }
      console.log('User disconnected');
   },
@@ -61,15 +63,16 @@ module.exports = {
    * Vt core.
    */
    vtCore : function vtCore(socket, msg, io){
+      var self = this;
       // Check for turn.
       if(socket.player.turn){
         //Check for msg(number) validity.
-        var val = numberValidity(msg);
+        var val = this.numberValidity(msg);
         if(val){
           // Treat number.
-          treatNumber(msg, io, socket, function(data){
+          this.treatNumber(msg, io, socket, function(data){
             // Pass turn to opponent.
-            passTurn(io, socket); // Opponent must exist!!
+            self.passTurn(io, socket); // Opponent must exist!!
             io.to(socket.room.roomName).emit('vt',[msg, data, socket.player.name]);
           });
         }
@@ -90,11 +93,11 @@ module.exports = {
      //Instanciate new player and add it to socket object.
      socket.player = new Player(pseudo);
      //Searching available room or creating one if it doesn't exist.
-     var room = searchForRoom(dualRooms);
+     var room = this.searchForRoom(dualRooms);
      if(room) {
-       joinRoom(socket, room);
+       this.joinRoom(socket, room);
      }else {
-       createRoom(socket, dualRooms, room);
+       this.createRoom(socket, dualRooms, room);
      }
   },
 
@@ -153,13 +156,13 @@ module.exports = {
      // Get socket from id.
      var oppSocket = io.sockets.connected[socketId];
      //Searching for available room.
-     newRoom = searchForRoom(dualRooms);
+     newRoom = this.searchForRoom(dualRooms);
      if(newRoom) {
        oppSocket.leave(oppSocket.room.roomName);
        //Update dualRooms (deleting current one).
-       deleteRoom(dualRooms, oppSocket.room);
+       this.deleteRoom(dualRooms, oppSocket.room);
        // Join the new room.
-       joinRoom(oppSocket, newRoom);
+       this.joinRoom(oppSocket, newRoom);
      }else {
        //Update room status.
        oppSocket.player.turn = false;
@@ -202,7 +205,7 @@ module.exports = {
        return val !== socket.id;
      });
      var oppSocket = io.sockets.connected[socketId];
-     var result = vt(number, oppSocket.player.number);
+     var result = this.vt(number, oppSocket.player.number);
      callback(result);
   },
 
