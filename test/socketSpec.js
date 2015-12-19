@@ -30,8 +30,8 @@ describe('Test on socketCtrl function', function(){
   describe('Test searchForRoom function', function(){
     var rooms = [{full: true}, {full: false}];
     // Test searchForRoom function.(Probleme !!!)
-    it('should return a room with false value for \'full\' property object', function(){
-      assert.equal(socketCtrl.searchForRoom(rooms), {full: true});
+    it('should return an object with false value for \'full\' property', function(){
+      assert.equal(JSON.stringify(socketCtrl.searchForRoom(rooms)), JSON.stringify({full: false}));
     });
   });
 });
