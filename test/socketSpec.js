@@ -17,12 +17,21 @@ describe('Test on socketCtrl function', function(){
 
   describe('Test vt function', function(){
 
-    // Test vt function.
+    // Test vt function.(Probleme !!!)
     it('should return specific object', function(){
-      assert.equal(socketCtrl.vt(1234, 9876).toString(), {T:0, V:0}.toString());
-      assert.equal(socketCtrl.vt(1234, 1234).toString(), {T:4, V:0}.toString());
-      assert.equal(socketCtrl.vt(1234, 1243).toString(), {T:2, V:2}.toString());
-      assert.equal(socketCtrl.vt(1234, 4321).toString(), {T:0, V:4}.toString());
+      assert.equal(JSON.stringify(socketCtrl.vt(1234, 9876)), JSON.stringify({T:0, V:0}));
+      assert.equal(JSON.stringify(socketCtrl.vt(1234, 1234)), JSON.stringify({T:4, V:0}));
+      assert.equal(JSON.stringify(socketCtrl.vt(1234, 1243)), JSON.stringify({T:2, V:2}));
+      assert.equal(JSON.stringify(socketCtrl.vt(1234, 4321)), JSON.stringify({T:0, V:4}));
+    });
+  });
+
+
+  describe('Test searchForRoom function', function(){
+    var rooms = [{full: true}, {full: false}];
+    // Test searchForRoom function.(Probleme !!!)
+    it('should return a room with false value for \'full\' property object', function(){
+      assert.equal(socketCtrl.searchForRoom(rooms), {full: true});
     });
   });
 });
