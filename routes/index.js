@@ -6,9 +6,5 @@ router.get('/', function(req, res, next) {
   res.render('index');
 });
 
-/* GET index page. */
-router.get('/index', function(req, res, next) {
-  res.render('connection');
-});
 
 module.exports = router;
