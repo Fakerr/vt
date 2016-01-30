@@ -26,6 +26,12 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-express-server": "^0.5.1",
     "grunt-parallel": "^0.4.1",
+    "gulp": "^3.9.0",
+    "gulp-csslint": "^0.2.0",
+    "gulp-jshint": "^2.0.0",
+    "gulp-livereload": "^3.8.1",
+    "gulp-nodemon": "^2.0.6",
+    "jshint": "^2.9.1",
     "load-grunt-tasks": "^3.3.0"
   }
 }

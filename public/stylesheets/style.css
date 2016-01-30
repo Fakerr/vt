@@ -22,7 +22,6 @@ body {
   height: 40px;
   margin: auto;
 }
-
 .btnStart:hover {
   background: #3cb0fd;
   background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
